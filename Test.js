@@ -1,2 +1,2 @@
-let X = "Neko was here";
+let X = "Rain was here";
 console.log(X);
