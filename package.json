@@ -18,8 +18,14 @@
   },
   "homepage": "https://github.com/XRonaldXD/Book-Review-NodeJS#readme",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "nodemon": "^3.1.10"
-  },
-  "devDependencies": {}
+    "express-session": "^1.18.2",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.19.2",
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-google-oauth20": "^2.0.0"
+  }
 }
