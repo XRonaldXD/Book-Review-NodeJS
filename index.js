@@ -8,12 +8,15 @@ const path = require('path');
 const port = require('./config/database').port;
 const app = express();
 
+
 // session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
+
+
 
 // Passport middleware
 app.use(passport.initialize());
@@ -23,7 +26,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/auth', require('./routes/auth'));
-
+app.use('/books',require('./routes/books'));
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });
@@ -31,6 +34,16 @@ app.get('/login', (req, res) => {
 app.get('/profile', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'profile.html'));
 });
+
+
+
+
+
+
+
+
+
+
 
 mongoose.connect(process.env.URL)
     .then(() => {
@@ -47,3 +60,4 @@ mongoose.connect(process.env.URL)
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
+
