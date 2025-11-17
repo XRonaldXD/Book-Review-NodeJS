@@ -23,9 +23,18 @@ app.use(passport.session());
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from view folder (for navbar.html, etc.)
+app.use(express.static(path.join(__dirname, 'view')));
+
 app.use('/auth', require('./routes/auth'));
 app.use('/books',require('./routes/books'));
 app.use('/reviews',require('./routes/reviews'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'view', 'index.html'));
+});
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });
