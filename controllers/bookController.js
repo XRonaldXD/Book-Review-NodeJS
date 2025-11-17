@@ -1,7 +1,18 @@
+const Book = require('../models/Book');
+
+
 const createBook = async (req, res) => {
-    const book = req.body;
-    const newBook = new Book(book); 
+    
+    const newbook = new Book(req.body);
+    try{
+        await newbook.save();
+        res.json(newbook);
+    }catch(error){
+        res.status(409).json({message: error.message});
+    }
+    
 }
+
 const getBooks = async (req, res) => {
     try {
         const book = await Book.find();
@@ -12,9 +23,9 @@ const getBooks = async (req, res) => {
 }
 
 const getSpecBook = async (req, res) => {
-    const title = req.params.title;
+    const id = req.params.id;
     try {
-        const title = await title.findOne({ roll: roll });
+        const book = await Book.findById(id);
         res.json(book);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -22,9 +33,11 @@ const getSpecBook = async (req, res) => {
 }
 
 const updateBook = async (req, res) => {
-    const title = req.params.title;
+    const id = req.params.id;
+    
     try {
-        const updateBook = await Book.findOneAndUpdate({ title: title }, req.body, { new: true });
+        await Book.findByIdAndUpdate(id, req.body);
+        const updateBook = await Book.findById(id);
         res.status(200).json(updateBook);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -32,9 +45,9 @@ const updateBook = async (req, res) => {
 }
 
 const deleteBook = async (req, res) => {
-    const title = req.params.title;
+    const id = req.params.id;
     try {
-        await Book.findOneAndDelete({title:title});
+        await Book.findOneAndDelete(id);
         res.status(200).json({ message: "Book deleted successfully" });
     } catch (error) {
         res.status(400).json({ message: error.message });

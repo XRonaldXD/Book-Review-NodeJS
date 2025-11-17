@@ -21,10 +21,7 @@ const bookSchema = new mongoose.Schema({
         required: true
     },
     
-    coverImage: {
-        type: String,
-        default: 'default-book-cover.jpg'
-    },
+    
     createdAt: {
         type: Date,
         default: Date.now
@@ -37,4 +34,4 @@ const bookSchema = new mongoose.Schema({
 
 
 const Book = mongoose.model('Book', bookSchema);
-
+module.exports = Book;
