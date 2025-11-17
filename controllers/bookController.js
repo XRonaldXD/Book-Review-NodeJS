@@ -36,7 +36,7 @@ const updateBook = async (req, res) => {
     const id = req.params.id;
     
     try {
-        await Book.findByIdAndUpdate(id, req.body);
+        await Book.findByIdAndUpdate(id, req.body, { new: true });
         const updateBook = await Book.findById(id);
         res.status(200).json(updateBook);
     } catch (error) {
