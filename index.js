@@ -9,15 +9,12 @@ const port = require('./config/database').port;
 const app = express();
 
 
-
 // session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
-
-
 
 // Passport middleware
 app.use(passport.initialize());
@@ -28,8 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/auth', require('./routes/auth'));
 app.use('/books',require('./routes/books'));
-
-
+app.use('/reviews',require('./routes/reviews'));
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });

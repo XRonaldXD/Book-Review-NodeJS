@@ -26,11 +26,8 @@ const bookSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+},
+{ timestamps: true });
 
 
 const Book = mongoose.model('Book', bookSchema);
