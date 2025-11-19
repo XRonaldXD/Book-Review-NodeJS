@@ -4,28 +4,23 @@ const bookSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        
     },
     author: {
         type: String,
         required: true,
-        
     },
     description: {
         type: String,
         required: true
     },
-    
     publishedDate: {
         type: Date,
         required: true
     },
-    
-    
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
+    createdBy: {
+        type: String,
+        required: true
+    }
 },
 { timestamps: true });
 
