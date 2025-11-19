@@ -10,8 +10,8 @@ router.post('/', UserController.createuser);
 // GET /user/:id
 router.get('/:id', UserController.getSpecuser);
 // PUT /user/:id                     
-router.put('/', UserController.updateuser);
+router.put('/:id', UserController.updateuser);
 // DELETE /user/:id                  
-router.delete('/', UserController.deleteuser);
+router.delete('/:id', UserController.deleteuser);
 
 module.exports = router;

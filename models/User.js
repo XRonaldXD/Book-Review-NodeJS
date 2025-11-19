@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
   name: {
     type: String,
     required: true,
@@ -11,8 +16,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true
+  },
+  profilePicture: {
+    type: String
   }
-},{ timestamps: true });
+}, { timestamps: true });
 
 
 const User = mongoose.model('User', userSchema);
