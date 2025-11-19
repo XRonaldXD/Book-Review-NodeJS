@@ -3,14 +3,14 @@ const passport = require('passport');
 const googleAuth = passport.authenticate('google', { scope: ['email', 'profile'] });
 
 const googleCallback = passport.authenticate('google', {
-    successRedirect: '/profile',
+    successRedirect: '/',
     failureRedirect: '/auth/failure',
 });
 
 const logout = (req, res) => {
     req.logout(() => {
         req.session.destroy();
-        res.send('Goodbye!');
+        res.redirect('/');
     });
 };
 
@@ -24,9 +24,9 @@ const getProfile = (req, res) => {
 
 const getCurrentUser = (req, res) => {
     if (req.isAuthenticated()) {
-        res.json({ user: req.user });
+        res.json({ loggedIn: true, user: req.user });
     } else {
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ loggedIn: false });
     }
 };
 

@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'view')));
 
 app.use('/auth', require('./routes/auth'));
 app.use('/books',require('./routes/books'));
+app.use('/user',require('./routes/user'));
 app.use('/reviews',require('./routes/reviews'));
 
 app.get('/', (req, res) => {
@@ -42,8 +43,6 @@ app.get('/login', (req, res) => {
 app.get('/profile', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'profile.html'));
 });
-
-
 
 
 
