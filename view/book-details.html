@@ -5,22 +5,145 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Placeholder :D</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-details {
+            background: #1f1f1f;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2d2d2d;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .book-details h2 {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .book-details p {
+            color: #b0b0b0;
+        }
+
+        .container {
+            background: #1f1f1f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-center i {
+            color: #667eea;
+        }
+
+        .col-md-8 {
+            color: #ffffff;
+        }
+
+        .col-md-8 h3 {
+            color: #ffffff;
+        }
+
+        .col-md-8 p {
+            color: #b0b0b0;
+        }
+    </style>
 </head>
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+
+    <!-- Navbar Container -->
     <div id="navbar"></div>
+    <script>
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                if (!response.ok) throw new Error('Failed to load navbar');
+                document.getElementById('navbar').innerHTML = await response.text();
+            } catch (error) {
+                console.error('Error loading navbar:', error);
+            }
+        }
+        loadNavbar();
+    </script>
+
+    <div class="container my-5">
+        <h1 class="mb-4">Book Details</h1>
+
+        <!-- Book details content goes here -->
+        <div class="row">
+            <!-- Left Column: Book Icon and Details -->
+            <div class="col-md-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-book" style="font-size: 6rem; color: #667eea;"></i>
+                </div>
+                <div class="book-details">
+                    <h2 id="bookTitle">Book Title</h2>
+                    <p><strong>Author:</strong> <span id="bookAuthor">Author Name</span></p>
+                    <p><strong>Published Year:</strong> <span id="bookYear">2025</span></p>
+                    <p><strong>Description:</strong></p>
+                    <p id="bookDescription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel nisi nec
+                        justo vehicula tincidunt.</p>
+                </div>
+            </div>
+
+            <!-- Middle and Right Column -->
+            <div class="col-md-8">
+                <h3>Additional Content</h3>
+                <p>Placeholder for review.html</p>
+            </div>
+        </div>
+    </div>
 
     <script>
-        fetch('navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            });
+        // Fetch book details dynamically
+        async function fetchBookDetails() {
+            try {
+                // Extract the book ID from the URL
+                const params = new URLSearchParams(window.location.search);
+                const bookId = params.get('id');
+
+                if (!bookId) {
+                    throw new Error('No book ID provided in the URL');
+                }
+
+                // Fetch the specific book details
+                const response = await fetch(`/books/${bookId}`);
+                if (!response.ok) throw new Error('Failed to fetch book details');
+                const book = await response.json();
+
+                // Populate book details
+                document.getElementById('bookTitle').textContent = book.title;
+                document.getElementById('bookAuthor').textContent = book.author;
+                document.getElementById('bookYear').textContent = new Date(book.publishedDate).getFullYear();
+                document.getElementById('bookDescription').textContent = book.description;
+            } catch (error) {
+                console.error('Error fetching book details:', error);
+                document.querySelector('.container').innerHTML = `
+            <p class="text-center text-danger">Failed to load book details. Please try again later.</p>
+        `;
+            }
+        }
+
+
+        // Initial fetch
+        fetchBookDetails();
     </script>
 </body>
 
