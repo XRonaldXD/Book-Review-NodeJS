@@ -144,9 +144,12 @@
     // Fetch reviews dynamically
     async function loadReviews(bookId) {
         try {
-            const response = await fetch(`/reviews?bookId=${bookId}`);
+            const response = await fetch('/reviews');
             if (!response.ok) throw new Error('Failed to fetch reviews');
-            const reviews = await response.json();
+            const allReviews = await response.json();
+
+            // Filter reviews by bookId
+            const reviews = allReviews.filter(review => review.bookId === bookId);
 
             const reviewsList = document.getElementById('reviewsList');
             reviewsList.innerHTML = reviews.length
