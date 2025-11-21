@@ -2,15 +2,21 @@ const Book = require('../models/Book');
 
 
 const createBook = async (req, res) => {
-    
-    const newbook = new Book(req.body);
-    try{
-        await newbook.save();
-        res.json(newbook);
-    }catch(error){
-        res.status(409).json({message: error.message});
+    // Check if user is authenticated
+    if (!req.user) {
+        return res.status(401).json({ message: 'You must be logged in to create a book' });
     }
     
+    try {
+        const newbook = new Book({
+            ...req.body,
+            createdBy: req.user._id  // Add user ID from authenticated session
+        });
+        await newbook.save();
+        res.json(newbook);
+    } catch(error) {
+        res.status(409).json({message: error.message});
+    }
 }
 
 const getBooks = async (req, res) => {

@@ -3,7 +3,14 @@ const Review = require('../models/Review');
 
 const createReview = async (req, res) => {
 
-    const newReview = new Review(req.body);
+    if(!req.user) {
+        return res.status(401).json({ message: 'You must be logged in to create a review' });
+    }
+
+    const newReview = new Review({
+        ...req.body,
+        createdBy: req.user._id  // Add user ID from authenticated session
+    });
     try {
         await newReview.save();
         res.json(newReview);

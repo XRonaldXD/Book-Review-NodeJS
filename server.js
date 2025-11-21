@@ -45,13 +45,6 @@ app.get('/profile', isLoggedIn, (req, res) => {
 });
 
 
-
-
-
-
-
-
-
 mongoose.connect(process.env.URL)
     .then(() => {
         console.log('MongoDB connected');
@@ -65,6 +58,6 @@ mongoose.connect(process.env.URL)
 
 
 function isLoggedIn(req, res, next) {
-    req.user ? next() : res.sendStatus(401);
+    req.user ? next() : res.redirect('/login');
 }
 
