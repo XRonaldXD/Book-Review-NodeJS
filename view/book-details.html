@@ -148,18 +148,6 @@
 
     <!-- Navbar Container -->
     <div id="navbar"></div>
-    <script>
-        async function loadNavbar() {
-            try {
-                const response = await fetch('navbar.html');
-                if (!response.ok) throw new Error('Failed to load navbar');
-                document.getElementById('navbar').innerHTML = await response.text();
-            } catch (error) {
-                console.error('Error loading navbar:', error);
-            }
-        }
-        loadNavbar();
-    </script>
 
     <div class="container my-5">
         <h1 class="mb-4">Book Details</h1>
@@ -187,8 +175,7 @@
                 <button class="btn btn-primary mb-3" 
                         data-bs-toggle="modal" 
                         data-bs-target="#createReviewModal"
-                        id="addReviewButton"
-                        style="display: none;">
+                        id="addReviewButton">
                     <i class="bi bi-plus-circle me-2"></i>
                     Add Your Review
                 </button>
@@ -397,12 +384,51 @@
         }
     }
 
+    // Check if user is logged in and show/hide review button
+    async function checkLoginAndToggleReviewButton() {
+        try {
+            const response = await fetch('/auth/me');
+            const addReviewButton = document.getElementById('addReviewButton');
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.loggedIn) {
+                    addReviewButton.style.display = 'inline-block';
+                } else {
+                    addReviewButton.style.display = 'none';
+                }
+            } else {
+                addReviewButton.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error checking login status:', error);
+            document.getElementById('addReviewButton').style.display = 'none';
+        }
+    }
+
+    // Load navbar with auth check
+    async function loadNavbar() {
+        try {
+            const response = await fetch('navbar.html');
+            if (!response.ok) throw new Error('Failed to load navbar');
+            document.getElementById('navbar').innerHTML = await response.text();
+            // Check authentication after navbar loads
+            if (window.checkNavbarAuth) {
+                window.checkNavbarAuth();
+            }
+        } catch (error) {
+            console.error('Error loading navbar:', error);
+        }
+    }
+
     // Initial fetch
+    loadNavbar();
     fetchBookDetails();
-    loadProfile();
-    checkLoginAndToggleReviewButton()
+    checkLoginAndToggleReviewButton();
 
 </script>
+
+<script src="./js/checkAuth.js"></script>
 </body>
 
 </html>
