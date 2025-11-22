@@ -195,11 +195,6 @@
                 <div class="modal-body">
                     <form id="reviewForm">
                         <div class="mb-3">
-                            <label class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="reviewerName" required placeholder="Enter your name">
-                        </div>
-
-                        <div class="mb-3">
                             <label class="form-label">Rating</label>
                             <div class="star-rating">
                                 <i class="bi bi-star-fill star" data-value="1"></i>
@@ -255,31 +250,97 @@
         }
     }
 
-    // Fetch reviews dynamically
+        // Cache current user and all users to avoid repeated fetches
+    let currentUser = null;
+    const userCache = new Map(); // userId → user object
+
     async function loadReviews(bookId) {
         try {
             const response = await fetch('/reviews');
             if (!response.ok) throw new Error('Failed to fetch reviews');
             const allReviews = await response.json();
 
-            // Filter reviews by bookId
-            const reviews = allReviews.filter(review => review.bookId === bookId);
-
+            const reviews = allReviews.filter(r => r.bookId === bookId);
             const reviewsList = document.getElementById('reviewsList');
-            reviewsList.innerHTML = reviews.length
-                ? reviews.map(review => `
-                    <div class="mb-3">
-                        <p><strong>${review.createdBy}</strong> <span class="text-muted">(${review.rating}/5)</span></p>
-                        <p>${review.comment}</p>
-                        <small class="text-muted">${new Date(review.createdAt).toLocaleString()}</small>
+
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<p class="text-muted">No reviews yet. Be the first to leave a review!</p>';
+                return;
+            }
+
+            // Fetch current logged-in user once
+            if (!currentUser) {
+                try {
+                    const meRes = await fetch('/auth/me');
+                    if (meRes.ok) {
+                        const data = await meRes.json();
+                        if (data.loggedIn && data.user) {
+                            currentUser = data.user;
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            // Build review HTML with real usernames
+            const reviewElements = await Promise.all(reviews.map(async (review) => {
+                let displayName = 'Anonymous';
+
+                // If review already has createdByName (future-proof), use it
+                if (review.createdByName) {
+                    displayName = review.createdByName;
+                }
+                // Otherwise, fetch user by createdBy ID
+                else if (review.createdBy) {
+                    const userId = review.createdBy;
+
+                    // Use cache if already fetched
+                    if (userCache.has(userId)) {
+                        const user = userCache.get(userId);
+                        displayName = user.name || user.username || user.email.split('@')[0];
+                    } else {
+                        try {
+                            const userRes = await fetch(`/user/${userId}`); // your existing endpoint
+                            if (userRes.ok) {
+                                const user = await userRes.json();
+                                userCache.set(userId, user);
+                                displayName = user.name || user.username || user.email.split('@')[0];
+                            }
+                        } catch (e) {
+                            displayName = 'Unknown User';
+                        }
+                    }
+                }
+
+                const isOwnReview = currentUser && 
+                    (review.createdBy === currentUser._id || review.createdBy === currentUser.id);
+
+                return `
+                    <div class="mb-4 p-4 rounded" style="background: #2a2a2a; border-left: 5px solid ${isOwnReview ? '#667eea' : '#444'}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="mb-1">
+                                    <strong>${displayName}</strong>
+                                    ${isOwnReview ? '<small class="text-primary ms-2"></small>' : ''}
+                                    <span class="text-warning ms-2">${'⭐'.repeat(review.rating)}</span>
+                                </p>
+                                <p class="mb-2">${review.comment.replace(/\n/g, '<br>')}</p>
+                                <small class="text-muted">
+                                    ${new Date(review.createdAt).toLocaleString('en-US', {
+                                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    })}
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                `).join('')
-                : '<p class="text-muted">No reviews yet. Be the first to leave a review!</p>';
+                `;
+            }));
+
+            reviewsList.innerHTML = reviewElements.join('');
+
         } catch (error) {
             console.error('Error loading reviews:', error);
-            document.getElementById('reviewsList').innerHTML = `
-                <p class="text-center text-danger">Failed to load reviews. Please try again later.</p>
-            `;
+            document.getElementById('reviewsList').innerHTML = 
+                '<p class="text-center text-danger">Failed to load reviews.</p>';
         }
     }
 
@@ -340,7 +401,6 @@
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id');
 
-        const reviewerName = document.getElementById('reviewerName').value;
         const rating = window.getSelectedRating ? window.getSelectedRating() : 0;
         const reviewComment = document.getElementById('reviewComment').value;
 
@@ -350,14 +410,13 @@
             return;
         }
 
-        if (!reviewerName || !rating || !reviewComment) {
+        if (!rating || !reviewComment) {
             alert('Please fill in all fields and select a rating.');
             return;
         }
 
         const reviewData = {
             bookId: bookId,
-            createdBy: reviewerName,
             rating: parseInt(rating),
             comment: reviewComment,
             createdAt: new Date().toISOString()
