@@ -1,0 +1,33 @@
+<script>
+    // Check if user is logged in and hide "Add Your Review" button if not
+    async function checkLoginAndToggleReviewButton() {
+        try {
+            const response = await fetch('/auth/me');
+            const addReviewBtn = document.querySelector('button[data-bs-target="#createReviewModal"]');
+
+            if (response.ok) {
+                // User is logged in → show button
+                if (addReviewBtn) addReviewBtn.style.display = 'inline-flex';
+            } else {
+                // User is NOT logged in → hide button and optionally show message
+                if (addReviewBtn) addReviewBtn.style.display = 'none';
+
+                // Optional: Show a message encouraging login
+                const reviewsHeader = document.querySelector('.col-md-8 h3');
+                if (reviewsHeader && !document.getElementById('loginPrompt')) {
+                    const prompt = document.createElement('p');
+                    prompt.id = 'loginPrompt';
+                    prompt.className = 'text-muted mt-2';
+                    prompt.innerHTML = 'Please <a href="/login" style="color:#667eea;text-decoration:underline;">log in</a> to leave a review.';
+                    reviewsHeader.after(prompt);
+                }
+            }
+        } catch (error) {
+            console.error('Error checking auth status:', error);
+            // On error, assume not logged in and hide button
+            const addReviewBtn = document.querySelector('button[data-bs-target="#createReviewModal"]');
+            if (addReviewBtn) addReviewBtn.style.display = 'none';
+        }
+    }
+    checkLoginAndToggleReviewButton();
+</script>
