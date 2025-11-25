@@ -282,6 +282,43 @@
         </div>
     </div>
 
+    <!-- Update Book Modal -->
+    <div class="modal fade" id="updateBookModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Book</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateBookForm">
+                        <input type="hidden" id="updateBookId">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="updateBookTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Author</label>
+                            <input type="text" class="form-control" id="updateBookAuthor" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="updateBookDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Published Date</label>
+                            <input type="date" class="form-control" id="updateBookDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateBook()">Update Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -355,6 +392,9 @@
                                 <small class="text-muted">Published: ${new Date(book.publishedDate).toLocaleDateString()}</small>
                             </div>
                             <div>
+                                <button class="btn btn-sm btn-warning me-2" onclick="editBook('${book._id}', '${book.title.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${book.author.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${book.description.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', '${book.publishedDate}')">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteBook('${book._id}')">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
@@ -449,6 +489,67 @@
                 showAlert('Success', 'Book created successfully!');
             } catch (error) {
                 console.error('Error creating book:', error);
+                showAlert('Error', error.message);
+            }
+        }
+
+        // Edit book
+        function editBook(id, title, author, description, publishedDate) {
+            // Decode HTML entities
+            const decodeHTML = (html) => {
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                return txt.value;
+            };
+            
+            document.getElementById('updateBookId').value = id;
+            document.getElementById('updateBookTitle').value = decodeHTML(title);
+            document.getElementById('updateBookAuthor').value = decodeHTML(author);
+            document.getElementById('updateBookDescription').value = decodeHTML(description);
+            document.getElementById('updateBookDate').value = publishedDate.split('T')[0];
+            
+            const modal = new bootstrap.Modal(document.getElementById('updateBookModal'));
+            modal.show();
+        }
+
+        // Update book
+        async function updateBook() {
+            const id = document.getElementById('updateBookId').value;
+            const title = document.getElementById('updateBookTitle').value;
+            const author = document.getElementById('updateBookAuthor').value;
+            const description = document.getElementById('updateBookDescription').value;
+            const publishedDate = document.getElementById('updateBookDate').value;
+            
+            if (!title || !author || !description || !publishedDate) {
+                showAlert('Error', 'Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/books/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        author,
+                        description,
+                        publishedDate
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to update book');
+                }
+                
+                // Close modal and refresh books
+                bootstrap.Modal.getInstance(document.getElementById('updateBookModal')).hide();
+                loadMyBooks();
+                showAlert('Success', 'Book updated successfully!');
+            } catch (error) {
+                console.error('Error updating book:', error);
                 showAlert('Error', error.message);
             }
         }
