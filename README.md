@@ -419,15 +419,15 @@ curl -X GET https://book-review-nodejs.onrender.com/books
 ```
 #### 2. **Post** (`/books`)
 ```
-curl -X POST -H "Content-Type: application/json" -H "Cookie: connect.sid=your-copied-value" -d '{"title":"New Book","author":"New Author","description":"A great read!","publishedDate":"2025-01-01"}' https://book-review-nodejs.onrender.com/books
+curl -X POST -H "Content-Type: application/json" -H "Cookie: connect.sid=YOUR_SESSION_COOKIE" -d "{\"title\":\"API Demo Book\",\"author\":\"API Author\",\"description\":\"Created via RESTful API during demo\",\"publishedDate\":\"2025-11-26\"}" https://book-review-nodejs.onrender.com/books
 ```
 #### 3. **Update** (`/books/:id`)
 ```
-curl -X PUT -H "Content-Type: application/json" -H "Cookie: connect.sid=your-copied-value" -d '{"description":"Updated description"}' https://book-review-nodejs.onrender.com/books/your-book-id
+curl -X PUT -H "Content-Type: application/json" -H "Cookie: connect.sid=YOUR_SESSION_COOKIE" -d "{\"description\":\"Updated via PUT request in demo\"}" https://book-review-nodejs.onrender.com/books/BOOK_ID_HERE
 ```
 #### 4. **Delete** (`/books/:id`)
 ```
-curl -X DELETE -H "Cookie: connect.sid=your-copied-value" https://book-review-nodejs.onrender.com/books/your-book-id
+curl -X DELETE -H "Cookie: connect.sid=YOUR_SESSION_COOKIE" https://book-review-nodejs.onrender.com/books/BOOK_ID_HERE
 ```
 
 ## 📝 License
