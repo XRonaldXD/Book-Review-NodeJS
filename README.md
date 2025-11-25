@@ -2,9 +2,21 @@
 
 A full-stack web application for managing book reviews with Google OAuth 2.0 authentication. Users can browse books, add reviews with star ratings, manage their own books and reviews, all with a modern dark-themed interface.
 
+## 📋 Project Information
+
+**Project Name:** Book Review NodeJS  
+**Course:** COMP3810SEF
+**Group Number:** 67
+**Group Members:**
+- Sham Hoi Kin - [14030537]
+- Leung Lok Hang - [13896384]
+- Liu Chin Yat - [13901860]
+- Lau Chun Wang - [14102285]
+- Leung Hou Jiu - [14099669]
+
 ## 🌐 Live Demo
 
-**Cloud URL:** [Add your deployed URL here]
+**Cloud URL:** https://book-review-nodejs.onrender.com
 
 ## ✨ Features
 
