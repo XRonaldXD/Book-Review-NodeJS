@@ -399,6 +399,25 @@ Body:
 - `checkNavbarAuth()` function updates login/logout button
 - Called after navbar HTML is inserted into DOM
 
+## CURL
+### Books (`/books`)
+#### 1. **Get** (`/books`)
+```
+curl -X GET https://book-review-nodejs.onrender.com/books
+```
+#### 2. **Post** (`/books`)
+```
+curl -X POST -H "Content-Type: application/json" -H "Cookie: connect.sid=your-copied-value" -d '{"title":"New Book","author":"New Author","description":"A great read!","publishedDate":"2025-01-01"}' https://book-review-nodejs.onrender.com/books
+```
+#### 3. **Update** (`/books/:id`)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cookie: connect.sid=your-copied-value" -d '{"description":"Updated description"}' https://book-review-nodejs.onrender.com/books/your-book-id
+```
+#### 4. **Delete** (`/books/:id`)
+```
+curl -X DELETE -H "Cookie: connect.sid=your-copied-value" https://book-review-nodejs.onrender.com/books/your-book-id
+```
+
 ## 📝 License
 
 This project is licensed under the ISC License.
